@@ -98,7 +98,7 @@ if ! grep -qx ENCRYPTION_KEY <<<"$EXISTING_KEYS"; then add_env ENCRYPTION_KEY "$
 call PATCH "/applications/$APP_UUID/envs/bulk" "$(jq -nc --argjson d "$ENVS" '{data:$d}')" >/dev/null
 echo "→ Set env: $(echo "$ENVS" | jq -r 'map(.key) | join(", ")')"
 
-DEPLOY=$(call GET "/deploy?uuid=$APP_UUID&force=false")
+DEPLOY=$(call POST "/deploy?uuid=$APP_UUID&force=false" "{}" 2>/dev/null || call GET "/deploy?uuid=$APP_UUID&force=false")
 echo "→ Deploy queued: $(echo "$DEPLOY" | jq -r '.deployments[0].deployment_uuid // .message // .')"
 echo
 echo "App UUID: $APP_UUID"
