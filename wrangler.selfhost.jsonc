@@ -1,0 +1,33 @@
+// Self-hosted (Docker / Coolify) runtime config. The app runs on workerd via
+// `wrangler dev --local`, with D1 and R2 persisted to WRANGLER_PERSIST_DIR.
+// Cloudflare-only bindings (send_email, Workers AI) are left out, so mail
+// goes through Resend. See docker/README.md.
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "quickinbox",
+	"main": ".svelte-kit/cloudflare/_worker.js",
+	"compatibility_date": "2025-06-01",
+	"compatibility_flags": ["nodejs_compat", "enable_nodejs_http_modules"],
+	"assets": {
+		"directory": ".svelte-kit/cloudflare",
+		"binding": "ASSETS"
+	},
+	"vars": {
+		"EMAIL_PROVIDER": "resend",
+		"CLOUDFLARE_MAIL_DOMAINS": "example.com"
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "quickmail",
+			"database_id": "00000000-0000-0000-0000-000000000000",
+			"migrations_dir": "migrations"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "ATTACHMENTS",
+			"bucket_name": "quickmail-attachments"
+		}
+	]
+}
